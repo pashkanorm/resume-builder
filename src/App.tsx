@@ -1,3 +1,4 @@
+// App.tsx
 import React, { useState } from "react";
 import ResumeForm from "./components/ResumeForm";
 import ResumePreview from "./components/ResumePreview";
@@ -17,29 +18,39 @@ export default function App() {
   });
 
   const handlePreview = () => {
-    setTimeout(() => {
-      const element = document.getElementById("resume-preview");
-      if (!element) return;
+    // 1️⃣ Create a temporary off-screen div
+    const tempDiv = document.createElement("div");
+    tempDiv.style.position = "absolute";
+    tempDiv.style.left = "-9999px";
+    tempDiv.style.top = "-9999px";
+    tempDiv.style.width = "210mm"; // A4 width
+    tempDiv.style.backgroundColor = "white";
+    tempDiv.style.padding = "20px";
+    document.body.appendChild(tempDiv);
 
-      html2pdf()
-        .set({
-          margin: [10, 10, 10, 10] as [number, number, number, number],
-          filename: "resume.pdf",
-          image: { type: "jpeg" as const, quality: 1 },
-          html2canvas: { scale: 2, scrollY: 0 },
-          jsPDF: {
-            unit: "mm" as const,
-            format: "a4" as const,
-            orientation: "portrait" as const,
-          },
-        })
-        .from(element)
-        .toPdf()
-        .outputPdf("bloburl")
-        .then((pdfUrl: string) => {
-          window.open(pdfUrl, "_blank");
-        });
-    }, 50);
+    // 2️⃣ Dynamically render ResumePreview into this div
+    import("react-dom/client").then(({ createRoot }) => {
+      createRoot(tempDiv).render(<ResumePreview data={data} />);
+
+      // 3️⃣ Wait a short moment to ensure React finishes rendering
+      setTimeout(() => {
+        html2pdf()
+          .set({
+            margin: [10, 10, 10, 10] as [number, number, number, number],
+            filename: "resume.pdf",
+            image: { type: "jpeg" as const, quality: 1 },
+            html2canvas: { scale: 2, scrollY: 0 },
+            jsPDF: { unit: "mm" as const, format: "a4" as const, orientation: "portrait" as const },
+          })
+          .from(tempDiv)
+          .toPdf()
+          .outputPdf("bloburl")
+          .then((pdfUrl: string) => {
+            window.open(pdfUrl, "_blank"); // Opens in PDF viewer
+            tempDiv.remove(); // Clean up
+          });
+      }, 50); // 50ms is usually sufficient
+    });
   };
 
   return (
@@ -96,26 +107,9 @@ export default function App() {
         </div>
       </div>
 
-      {/* Preview / Open PDF button */}
+      {/* Preview button */}
       <div className="preview-button-container">
         <button onClick={handlePreview}>Preview Resume</button>
-      </div>
-
-      {/* Hidden off-screen div for PDF generation */}
-      <div
-        id="resume-preview"
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "210mm",
-          opacity: 0,
-          pointerEvents: "none",
-          backgroundColor: "white",
-          padding: "20px",
-        }}
-      >
-        <ResumePreview data={data} />
       </div>
     </div>
   );
