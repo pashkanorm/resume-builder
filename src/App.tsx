@@ -3,7 +3,8 @@ import React, { useState } from "react";
 import ResumeForm from "./components/ResumeForm";
 import ResumePreview from "./components/ResumePreview";
 import type { ResumeData } from "./types/types";
-import html2pdf from "html2pdf.js";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 import "./App.css";
 
 export default function App() {
@@ -17,40 +18,63 @@ export default function App() {
     languages: [],
   });
 
-  const handlePreview = () => {
-    // 1️⃣ Create a temporary off-screen div
-    const tempDiv = document.createElement("div");
-    tempDiv.style.position = "absolute";
-    tempDiv.style.left = "-9999px";
-    tempDiv.style.top = "-9999px";
-    tempDiv.style.width = "210mm"; // A4 width
-    tempDiv.style.backgroundColor = "white";
-    tempDiv.style.padding = "20px";
-    document.body.appendChild(tempDiv);
+  const handlePreview = async () => {
+    // 1️⃣ Create an offscreen container dynamically
+    const container = document.createElement("div");
+    container.style.position = "absolute";
+    container.style.left = "-9999px";
+    container.style.top = "0";
+    container.style.width = "210mm"; // A4 width
+    container.style.backgroundColor = "white";
+    container.style.padding = "20px";
+    document.body.appendChild(container);
 
-    // 2️⃣ Dynamically render ResumePreview into this div
-    import("react-dom/client").then(({ createRoot }) => {
-      createRoot(tempDiv).render(<ResumePreview data={data} />);
+    try {
+      // 2️⃣ Render ResumePreview into container
+      const tempDiv = document.createElement("div");
+      container.appendChild(tempDiv);
+      tempDiv.innerHTML = ""; // ensure empty
 
-      // 3️⃣ Wait a short moment to ensure React finishes rendering
-      setTimeout(() => {
-        html2pdf()
-          .set({
-            margin: [10, 10, 10, 10] as [number, number, number, number],
-            filename: "resume.pdf",
-            image: { type: "jpeg" as const, quality: 1 },
-            html2canvas: { scale: 2, scrollY: 0 },
-            jsPDF: { unit: "mm" as const, format: "a4" as const, orientation: "portrait" as const },
-          })
-          .from(tempDiv)
-          .toPdf()
-          .outputPdf("bloburl")
-          .then((pdfUrl: string) => {
-            window.open(pdfUrl, "_blank"); // Opens in PDF viewer
-            tempDiv.remove(); // Clean up
+      // React 18 approach
+      import("react-dom/client").then(({ createRoot }) => {
+        const root = createRoot(tempDiv);
+        root.render(<ResumePreview data={data} />);
+
+        // 3️⃣ Wait a tiny bit to ensure React renders fully
+        setTimeout(async () => {
+          // 4️⃣ Capture container as canvas
+          const canvas = await html2canvas(container, {
+            scale: 2,
+            useCORS: true,
+            scrollY: -window.scrollY,
           });
-      }, 50); // 50ms is usually sufficient
-    });
+
+          // 5️⃣ Generate PDF from canvas
+          const imgData = canvas.toDataURL("image/jpeg", 1.0);
+          const pdf = new jsPDF({
+            orientation: "portrait",
+            unit: "mm",
+            format: "a4",
+          });
+
+          const pageWidth = pdf.internal.pageSize.getWidth();
+          const imgHeight = (canvas.height * pageWidth) / canvas.width;
+          pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, imgHeight);
+
+          // 6️⃣ Open PDF in default viewer tab
+          const blob = pdf.output("blob");
+          const pdfUrl = URL.createObjectURL(blob);
+          window.open(pdfUrl, "_blank");
+
+          // 7️⃣ Cleanup: remove offscreen container
+          root.unmount();
+          container.remove();
+        }, 50); // short delay to ensure render
+      });
+    } catch (err) {
+      console.error("Error generating PDF:", err);
+      container.remove();
+    }
   };
 
   return (
@@ -85,7 +109,6 @@ export default function App() {
 
       {/* Main layout */}
       <div className="main-layout">
-        {/* Left column 66% */}
         <div className="left-column">
           <ResumeForm
             data={data}
@@ -94,10 +117,8 @@ export default function App() {
           />
         </div>
 
-        {/* Vertical line */}
         <div className="vertical-line"></div>
 
-        {/* Right column 33% */}
         <div className="right-column">
           <ResumeForm
             data={data}
