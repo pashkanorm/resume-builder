@@ -1,4 +1,3 @@
-// App.tsx
 import React, { useState } from "react";
 import ResumeForm from "./components/ResumeForm";
 import ResumePreview from "./components/ResumePreview";
@@ -18,63 +17,52 @@ export default function App() {
     languages: [],
   });
 
-  const handlePreview = async () => {
-    // 1️⃣ Create an offscreen container dynamically
+  const handlePreview = () => {
+    // 1️⃣ Create hidden offscreen container
     const container = document.createElement("div");
-    container.style.position = "absolute";
+    container.style.position = "fixed";
+    container.style.top = "-9999px";
     container.style.left = "-9999px";
-    container.style.top = "0";
-    container.style.width = "210mm"; // A4 width
+    container.style.width = "210mm";
     container.style.backgroundColor = "white";
-    container.style.padding = "20px";
+    container.style.padding = "0px";
     document.body.appendChild(container);
 
-    try {
-      // 2️⃣ Render ResumePreview into container
-      const tempDiv = document.createElement("div");
-      container.appendChild(tempDiv);
-      tempDiv.innerHTML = ""; // ensure empty
+    // 2️⃣ Render ResumePreview into it
+    import("react-dom/client").then(({ createRoot }) => {
+      const root = createRoot(container);
+      root.render(<ResumePreview data={data} />);
 
-      // React 18 approach
-      import("react-dom/client").then(({ createRoot }) => {
-        const root = createRoot(tempDiv);
-        root.render(<ResumePreview data={data} />);
+      // 3️⃣ Wait for next animation frame (DOM fully painted)
+      requestAnimationFrame(() => {
+        html2canvas(container, {
+          scale: 2,
+          useCORS: true,
+          scrollY: -window.scrollY,
+        })
+          .then((canvas) => {
+            const imgData = canvas.toDataURL("image/jpeg", 1.0);
+            const pdf = new jsPDF({
+              orientation: "portrait",
+              unit: "mm",
+              format: "a4",
+            });
 
-        // 3️⃣ Wait a tiny bit to ensure React renders fully
-        setTimeout(async () => {
-          // 4️⃣ Capture container as canvas
-          const canvas = await html2canvas(container, {
-            scale: 2,
-            useCORS: true,
-            scrollY: -window.scrollY,
-          });
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const imgHeight = (canvas.height * pageWidth) / canvas.width;
 
-          // 5️⃣ Generate PDF from canvas
-          const imgData = canvas.toDataURL("image/jpeg", 1.0);
-          const pdf = new jsPDF({
-            orientation: "portrait",
-            unit: "mm",
-            format: "a4",
-          });
+            pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, imgHeight);
 
-          const pageWidth = pdf.internal.pageSize.getWidth();
-          const imgHeight = (canvas.height * pageWidth) / canvas.width;
-          pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, imgHeight);
+            const blob = pdf.output("blob");
+            const pdfUrl = URL.createObjectURL(blob);
+            window.open(pdfUrl, "_blank"); // opens PDF viewer
 
-          // 6️⃣ Open PDF in default viewer tab
-          const blob = pdf.output("blob");
-          const pdfUrl = URL.createObjectURL(blob);
-          window.open(pdfUrl, "_blank");
-
-          // 7️⃣ Cleanup: remove offscreen container
-          root.unmount();
-          container.remove();
-        }, 50); // short delay to ensure render
+            root.unmount(); // clean up
+            container.remove();
+          })
+          .catch(console.error);
       });
-    } catch (err) {
-      console.error("Error generating PDF:", err);
-      container.remove();
-    }
+    });
   };
 
   return (

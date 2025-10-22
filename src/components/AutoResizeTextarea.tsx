@@ -1,8 +1,9 @@
 import React, { useRef, useEffect } from "react";
+import type { TextareaHTMLAttributes, ChangeEvent } from "react";
 
-interface AutoResizeTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface AutoResizeTextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "onChange"> {
   value: string;
-  onChange: (val: string) => void;
+  onChange: (val: string) => void; // keep the simpler signature
 }
 
 const AutoResizeTextarea: React.FC<AutoResizeTextareaProps> = ({ value, onChange, ...props }) => {
@@ -19,12 +20,16 @@ const AutoResizeTextarea: React.FC<AutoResizeTextareaProps> = ({ value, onChange
     resize();
   }, [value]);
 
+  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    onChange(e.target.value);
+  };
+
   return (
     <textarea
       {...props}
       ref={textareaRef}
       value={value}
-      onChange={(e) => onChange(e.target.value)}
+      onChange={handleChange}
       style={{ overflow: "hidden", resize: "none" }}
     />
   );

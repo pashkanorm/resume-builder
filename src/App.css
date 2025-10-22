@@ -2,6 +2,22 @@
   font-family: Arial, sans-serif;
   padding: 20px;
 }
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  background-color: #ffffff !important; /* force white background */
+  color: #000;
+  overflow-y: auto;   /* allow vertical scrolling */
+  overflow-x: hidden; /* prevent horizontal scroll */
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #ffffff; /* white background for root */
+}
 
 /* Header */
 .header {

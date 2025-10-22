@@ -7,85 +7,160 @@ interface Props {
 
 const ResumePreview: React.FC<Props> = ({ data }) => {
   return (
-    <div className="font-sans text-gray-800 p-6" style={{ width: "100%", boxSizing: "border-box" }}>
+    <div
+      id="resume-preview"
+      style={{
+        width: "210mm",
+        height: "297mm",
+        margin: 0,
+        padding: 0,
+        fontFamily: "Arial, sans-serif",
+        fontSize: "12pt",
+        color: "#333",
+        display: "flex",
+        flexDirection: "column",
+        boxSizing: "border-box",
+        backgroundColor: "#2e7d32", // Green header background
+        overflow: "hidden",
+        border: "none",
+        outline: "none",
+      }}
+    >
       {/* Header */}
-      <div className="border-b pb-2 mb-4">
-        <h1 className="text-3xl font-bold">{data.contact.fullName}</h1>
-        <p className="text-lg text-gray-600">{data.contact.title}</p>
+      <div
+        style={{
+          color: "#fff",
+          padding: "40px 20px",
+          boxSizing: "border-box",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          margin: 0,
+        }}
+      >
+        <h1 style={{ fontSize: "24pt", margin: 0 }}>{data.contact.fullName}</h1>
+        <p style={{ fontSize: "14pt", margin: "4px 0 0 0" }}>{data.contact.title}</p>
       </div>
 
-      {/* Main content: two columns */}
-      <div className="flex gap-6">
-        {/* Left column (66%) */}
-        <div style={{ flex: "2" }}>
-          {/* Summary */}
+      {/* Main content */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          flexGrow: 1,
+          flexBasis: 0,
+          backgroundColor: "#ffffff",
+          boxSizing: "border-box",
+          margin: 0,
+          padding: 0,
+        }}
+      >
+        {/* Left column */}
+        <div
+          style={{
+            width: "66%",
+            padding: "20px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "16px",
+            wordBreak: "break-word",
+            overflowWrap: "break-word",
+          }}
+        >
           {data.summary && (
-            <section className="mb-4">
-              <h2 className="text-xl font-semibold border-b mb-2">Summary</h2>
-              <p>{data.summary}</p>
+            <section>
+              <h2 style={{ fontSize: "16pt", borderBottom: "1px solid #000", width: "100%" }}>
+                Summary
+              </h2>
+              <p style={{ whiteSpace: "pre-wrap", marginTop: "4px" }}>{data.summary}</p>
             </section>
           )}
 
-          {/* Experience */}
           {data.experience.length > 0 && (
-            <section className="mb-4">
-              <h2 className="text-xl font-semibold border-b mb-2">Experience</h2>
+            <section>
+              <h2 style={{ fontSize: "16pt", borderBottom: "1px solid #000", width: "100%" }}>
+                Experience
+              </h2>
               {data.experience.map((exp, i) => (
-                <div key={exp.id || i} className="mb-3">
-                  <p className="font-semibold">{exp.role}</p>
-                  <p className="text-sm text-gray-700">
-                    {exp.company}
+                <div key={exp.id || i} style={{ marginBottom: "8px" }}>
+                  <p style={{ fontWeight: 600, margin: 0 }}>{exp.role}</p>
+                  <p style={{ fontSize: "10pt", color: "#555", margin: 0 }}>
+                    {exp.company}{" "}
                     {exp.startDate || exp.endDate
-                      ? ` (${exp.startDate || "?"} - ${exp.endDate || "Present"})`
+                      ? `(${exp.startDate || "?"} - ${exp.endDate || "Present"})`
                       : ""}
                   </p>
-                  {exp.summary && <p className="text-sm mt-1">{exp.summary}</p>}
+                  {exp.summary && (
+                    <p style={{ whiteSpace: "pre-wrap", margin: "4px 0 0 0" }}>{exp.summary}</p>
+                  )}
                 </div>
               ))}
             </section>
           )}
 
-          {/* Education */}
           {data.education.length > 0 && (
-            <section className="mb-4">
-              <h2 className="text-xl font-semibold border-b mb-2">Education</h2>
+            <section>
+              <h2 style={{ fontSize: "16pt", borderBottom: "1px solid #000", width: "100%" }}>
+                Education
+              </h2>
               {data.education.map((edu, i) => (
-                <div key={edu.id || i} className="mb-2">
-                  <p className="font-semibold">{edu.school}</p>
-                  <p className="text-sm text-gray-700">
-                    {edu.degree}
+                <div key={edu.id || i} style={{ marginBottom: "8px" }}>
+                  <p style={{ fontWeight: 600, margin: 0 }}>{edu.school}</p>
+                  <p style={{ fontSize: "10pt", color: "#555", margin: 0 }}>
+                    {edu.degree}{" "}
                     {edu.startDate || edu.endDate
-                      ? ` (${edu.startDate || "?"} - ${edu.endDate || "?"})`
+                      ? `(${edu.startDate || "?"} - ${edu.endDate || "?"})`
                       : ""}
                   </p>
-                  {edu.summary && <p className="text-sm mt-1">{edu.summary}</p>}
+                  {edu.summary && (
+                    <p style={{ whiteSpace: "pre-wrap", margin: "4px 0 0 0" }}>{edu.summary}</p>
+                  )}
                 </div>
               ))}
             </section>
           )}
 
-          {/* Projects */}
           {data.projects.length > 0 && (
-            <section className="mb-4">
-              <h2 className="text-xl font-semibold border-b mb-2">Projects</h2>
+            <section>
+              <h2 style={{ fontSize: "16pt", borderBottom: "1px solid #000", width: "100%" }}>
+                Projects
+              </h2>
               {data.projects.map((proj, i) => (
-                <div key={proj.id || i} className="mb-2">
-                  <p className="font-semibold">{proj.title}</p>
-                  <p className="text-sm text-gray-700">{proj.description}</p>
+                <div key={proj.id || i} style={{ marginBottom: "8px" }}>
+                  <p style={{ fontWeight: 600, margin: 0 }}>{proj.title}</p>
+                  <p style={{ margin: "4px 0 0 0", color: "#555" }}>{proj.description}</p>
                 </div>
               ))}
             </section>
           )}
         </div>
 
-        {/* Vertical line */}
-        <div style={{ width: "1px", backgroundColor: "#ccc" }} />
+        {/* Divider */}
+        <div
+          style={{
+            width: "1px",
+            backgroundColor: "#ccc",
+            margin: 0,
+            padding: 0,
+          }}
+        />
 
-        {/* Right column (33%) */}
-        <div style={{ flex: "1", display: "flex", flexDirection: "column", gap: "16px" }}>
-          {/* Contact info */}
+        {/* Right column */}
+        <div
+          style={{
+            width: "33%",
+            padding: "20px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "16px",
+            wordBreak: "break-word",
+            overflowWrap: "break-word",
+          }}
+        >
           <section>
-            <h2 className="text-xl font-semibold border-b mb-2">Contact</h2>
+            <h2 style={{ fontSize: "16pt", borderBottom: "1px solid #000", width: "100%" }}>
+              Contact
+            </h2>
             {data.contact.email && <p>Email: {data.contact.email}</p>}
             {data.contact.phone && <p>Phone: {data.contact.phone}</p>}
             {data.contact.location && <p>Location: {data.contact.location}</p>}
@@ -94,18 +169,20 @@ const ResumePreview: React.FC<Props> = ({ data }) => {
             {data.contact.github && <p>GitHub: {data.contact.github}</p>}
           </section>
 
-          {/* Skills */}
           {data.skills.length > 0 && (
             <section>
-              <h2 className="text-xl font-semibold border-b mb-2">Skills</h2>
+              <h2 style={{ fontSize: "16pt", borderBottom: "1px solid #000", width: "100%" }}>
+                Skills
+              </h2>
               <p>{data.skills.join(", ")}</p>
             </section>
           )}
 
-          {/* Languages */}
           {data.languages.length > 0 && (
             <section>
-              <h2 className="text-xl font-semibold border-b mb-2">Languages</h2>
+              <h2 style={{ fontSize: "16pt", borderBottom: "1px solid #000", width: "100%" }}>
+                Languages
+              </h2>
               <p>{data.languages.join(", ")}</p>
             </section>
           )}
