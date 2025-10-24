@@ -130,3 +130,30 @@ html, body {
 .close-button:hover {
   background: #c53030;
 }
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 540;
+  font-size: 16pt;
+  border-bottom: 1px solid #000;
+  padding-bottom: 4px;
+  margin-bottom: 8px;
+}
+
+/* Optional: edit icon button */
+.section-title .edit-icon {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+  transition: color 0.2s;
+}
+
+.section-title .edit-icon:hover {
+  color: #000;
+}

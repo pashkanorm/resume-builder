@@ -9,36 +9,49 @@ export interface Contact {
   github?: string;
 }
 
-export interface ExperienceItem {
+export interface Experience {
   id: string;
   company: string;
   role: string;
-  summary: string; 
+  summary?: string;
   startDate?: string;
   endDate?: string;
 }
 
-export interface EducationItem {
+export interface Education {
   id: string;
-  school: string;     
+  school: string;
   degree: string;
   startDate?: string;
   endDate?: string;
   summary?: string;
 }
 
-export interface ProjectItem {
+export interface Project {
   id: string;
   title: string;
-  description: string;
+  description?: string;
 }
 
 export interface ResumeData {
   contact: Contact;
-  summary: string;
-  experience: ExperienceItem[];
-  education: EducationItem[];
-  projects: ProjectItem[];
-  skills: string[];
-  languages: string[];
+  summary?: string;
+  experience: Experience[];
+  education: Education[];
+  projects: Project[];
+  skills?: string[];
+  languages?: string[];
+  contactText?: string;
+  skillsText?: string;
+  languagesText?: string;
+  experienceText?: string; 
+  educationText?: string; 
+  projectsText?: string; 
+
+  headerBgColor?: string;
+  headerTextColor?: string;
+  leftColumnBgColor?: string;
+  leftColumnTextColor?: string;
+  rightColumnBgColor?: string;
+  rightColumnTextColor?: string;
 }
