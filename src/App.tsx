@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import ResumeForm from "./components/ResumeForm";
+import ResumeHeader from "./components/ResumeHeader";
+import ResumeColumn from "./components/ResumeColumn";
 import ResumePreview from "./components/ResumePreview";
 import type { ResumeData } from "./types/types";
-import ColorSquare from "./components/ColorSquare";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import "./App.css";
@@ -15,7 +15,7 @@ export default function App() {
     education: [],
     projects: [],
     skills: [],
-    languages: [],
+    languagesList: [{ name: "", level: 0 }],
     headerBgColor: "#2c8b30ff",
     headerTextColor: "#ffffff",
     leftColumnBgColor: "#ffffff",
@@ -45,12 +45,23 @@ export default function App() {
 
     import("react-dom/client").then(({ createRoot }) => {
       const root = createRoot(container);
-      root.render(<ResumePreview data={data} titles={titles} />);
+      root.render(
+        <ResumePreview
+          data={data}
+          titles={titles}
+          leftColumnBgColor={data.leftColumnBgColor}
+          rightColumnBgColor={data.rightColumnBgColor}
+        />
+      );
       requestAnimationFrame(() => {
         html2canvas(container, { scale: 2, useCORS: true })
           .then((canvas) => {
             const imgData = canvas.toDataURL("image/jpeg", 1.0);
-            const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+            const pdf = new jsPDF({
+              orientation: "portrait",
+              unit: "mm",
+              format: "a4",
+            });
             const pageWidth = pdf.internal.pageSize.getWidth();
             const imgHeight = (canvas.height * pageWidth) / canvas.width;
             pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, imgHeight);
@@ -66,97 +77,59 @@ export default function App() {
   };
 
   return (
-    <div className="app-container">
-      {/* HEADER SECTION */}
-      <div className="header" style={{ backgroundColor: data.headerBgColor, color: data.headerTextColor, padding: "10px" }}>
-        <input
-          type="text"
-          placeholder="Full Name"
-          value={data.contact.fullName}
-          onChange={(e) => setData(prev => ({ ...prev, contact: { ...prev.contact, fullName: e.target.value } }))}
-          className="input-field"
-        />
-        <input
-          type="text"
-          placeholder="Position / Job Title"
-          value={data.contact.title}
-          onChange={(e) => setData(prev => ({ ...prev, contact: { ...prev.contact, title: e.target.value } }))}
-          className="input-field"
-        />
-
-        {/* Header color pickers */}
-        <div style={{ display: "flex", gap: "20px", marginTop: "10px" }}>
-          <ColorSquare
-            color={data.headerBgColor || "#2c8b30ff"}
-            onChange={(val) => setData(prev => ({ ...prev, headerBgColor: val }))}
-            label="Edit background color"
-          />
-          <ColorSquare
-            color={data.headerTextColor || "#000000ff"} 
-            onChange={(val) => setData(prev => ({ ...prev, headerTextColor: val }))}
-            label="Edit text color"
-          />
+    <div
+      className="app-container"
+      style={{ display: "flex", justifyContent: "center" }}
+    >
+      {/* CENTERED CONTAINER */}
+      <div
+        style={{
+          width: "900px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px",
+        }}
+      >
+        {/* HEADER */}
+        <div style={{ width: "100%" }}>
+          <ResumeHeader data={data} setData={setData} />
         </div>
-      </div>
 
-      {/* MAIN LAYOUT */}
-      <div className="main-layout" style={{ display: "flex", gap: "10px" }}>
-        {/* LEFT COLUMN */}
-        <div className="left-column" style={{ flex: 1, backgroundColor: data.leftColumnBgColor, color: data.leftColumnTextColor, padding: "10px" }}>
-          <ResumeForm
+        {/* COLUMNS WRAPPER */}
+        <div style={{ display: "flex", width: "100%", gap: "10px" }}>
+          <ResumeColumn
             data={data}
             setData={setData}
             titles={titles}
             setTitles={setTitles}
             sections={["summary", "experience", "education", "projects"]}
+            flex={2}
+            bgColor={data.leftColumnBgColor}
+            textColor={data.leftColumnTextColor}
+            isLeft
           />
 
-          {/* Left color pickers */}
-          <div style={{ display: "flex", gap: "20px", marginTop: "10px" }}>
-            <ColorSquare
-              color={data.leftColumnBgColor || "#ffffffff"}
-              onChange={(val) => setData(prev => ({ ...prev, leftColumnBgColor: val }))}
-              label="Edit background color"
-            />
-            <ColorSquare
-              color={data.leftColumnTextColor || "#000000ff"}
-              onChange={(val) => setData(prev => ({ ...prev, leftColumnTextColor: val }))}
-              label="Edit text color"
-            />
-          </div>
-        </div>
+          <div
+            className="vertical-line"
+            style={{ width: "1px", backgroundColor: "#ccc" }}
+          />
 
-        <div className="vertical-line"></div>
-
-        {/* RIGHT COLUMN */}
-        <div className="right-column" style={{ flex: 1, backgroundColor: data.rightColumnBgColor, color: data.rightColumnTextColor, padding: "10px" }}>
-          <ResumeForm
+          <ResumeColumn
             data={data}
             setData={setData}
             titles={titles}
             setTitles={setTitles}
             sections={["contact", "skills", "languages"]}
+            flex={1}
+            bgColor={data.rightColumnBgColor}
+            textColor={data.rightColumnTextColor}
           />
-
-          {/* Right color pickers */}
-          <div style={{ display: "flex", gap: "20px", marginTop: "10px" }}>
-            <ColorSquare
-              color={data.rightColumnBgColor || "#ffffffff"}
-              onChange={(val) => setData(prev => ({ ...prev, rightColumnBgColor: val }))}
-              label="Edit background color"
-            />
-            <ColorSquare
-              color={data.rightColumnTextColor || "#000000ff"}
-              onChange={(val) => setData(prev => ({ ...prev, rightColumnTextColor: val }))}
-              label="Edit text color"
-            />
-          </div>
         </div>
-      </div>
 
-      {/* PREVIEW BUTTON */}
-      <div className="preview-button-container">
-        <button onClick={handlePreview}>Preview Resume</button>
+        {/* PREVIEW BUTTON */}
+        <div className="preview-button-container">
+          <button onClick={handlePreview}>Preview Resume</button>
+        </div>
       </div>
     </div>
   );

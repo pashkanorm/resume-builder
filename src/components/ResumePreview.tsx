@@ -1,16 +1,20 @@
 import React from "react";
-import type { ResumeData, Experience, Education, Project } from "../types/types";
+import type { ResumeData, Experience, Education, Project, Language } from "../types/types";
+import { invertHexColor } from "../utils/invertHexColor";
+
 
 interface Props {
   data: ResumeData;
-  titles: Record<string, string>; // <-- receive titles from ResumeForm
+  titles: Record<string, string>;
+  leftColumnBgColor?: string;
+  rightColumnBgColor?: string;
 }
 
 const SectionPreview: React.FC<{ title: string; children: React.ReactNode }> = ({
   title,
   children,
 }) => (
-  <section>
+  <section style={{ marginBottom: "16px" }}>
     <h2
       style={{
         fontSize: "16pt",
@@ -35,29 +39,20 @@ const ResumePreview: React.FC<Props> = ({ data, titles }) => {
     rightColumnTextColor = "#000000",
   } = data;
 
-  const textStyle: React.CSSProperties = {
-    whiteSpace: "pre-wrap",
-    margin: 0,
-  };
+  const textStyle: React.CSSProperties = { whiteSpace: "pre-wrap", margin: 0 };
 
   return (
     <div
       id="resume-preview"
       style={{
         width: "210mm",
-        height: "297mm",
-        margin: 0,
-        padding: 0,
+        minHeight: "297mm",
         fontFamily: "Arial, sans-serif",
         fontSize: "12pt",
         color: "#333",
         display: "flex",
         flexDirection: "column",
-        boxSizing: "border-box",
         backgroundColor: "#ffffff",
-        overflow: "hidden",
-        border: "none",
-        outline: "none",
       }}
     >
       {/* Header */}
@@ -72,7 +67,9 @@ const ResumePreview: React.FC<Props> = ({ data, titles }) => {
         }}
       >
         <h1 style={{ fontSize: "24pt", margin: 0 }}>{data.contact.fullName}</h1>
-        <p style={{ fontSize: "14pt", margin: "4px 0 0 0" }}>{data.contact.title}</p>
+        <p style={{ fontSize: "14pt", margin: "4px 0 0 0" }}>
+          {data.contact.title}
+        </p>
       </div>
 
       {/* Main content */}
@@ -85,30 +82,30 @@ const ResumePreview: React.FC<Props> = ({ data, titles }) => {
             display: "flex",
             flexDirection: "column",
             gap: "16px",
-            wordBreak: "break-word",
-            overflowWrap: "break-word",
             backgroundColor: leftColumnBgColor,
             color: leftColumnTextColor,
           }}
         >
-          {/* Summary */}
           {data.summary && (
             <SectionPreview title={titles.summary || "Summary"}>
-              <p style={{ ...textStyle, marginTop: "4px" }}>{data.summary}</p>
+              <p style={textStyle}>{data.summary}</p>
             </SectionPreview>
           )}
 
-          {/* Experience */}
-          {(data.experience.length > 0 || data.experienceText) && (
+          {(data.experienceText || data.experience.length > 0) && (
             <SectionPreview title={titles.experience || "Experience"}>
-              {data.experienceText && <p style={{ ...textStyle, marginTop: "4px" }}>{data.experienceText}</p>}
+              {data.experienceText && (
+                <p style={textStyle}>{data.experienceText}</p>
+              )}
               {data.experience.map((exp: Experience) => (
                 <div key={exp.id} style={{ marginBottom: "8px" }}>
                   <p style={{ fontWeight: 600, margin: 0 }}>{exp.role}</p>
                   <p style={{ fontSize: "10pt", color: "#555", margin: 0 }}>
                     {exp.company}{" "}
                     {exp.startDate || exp.endDate
-                      ? `(${exp.startDate || "?"} - ${exp.endDate || "Present"})`
+                      ? `(${exp.startDate || "?"} - ${
+                          exp.endDate || "Present"
+                        })`
                       : ""}
                   </p>
                   {exp.summary && <p style={textStyle}>{exp.summary}</p>}
@@ -117,10 +114,11 @@ const ResumePreview: React.FC<Props> = ({ data, titles }) => {
             </SectionPreview>
           )}
 
-          {/* Education */}
-          {(data.education.length > 0 || data.educationText) && (
+          {(data.educationText || data.education.length > 0) && (
             <SectionPreview title={titles.education || "Education"}>
-              {data.educationText && <p style={{ ...textStyle, marginTop: "4px" }}>{data.educationText}</p>}
+              {data.educationText && (
+                <p style={textStyle}>{data.educationText}</p>
+              )}
               {data.education.map((edu: Education) => (
                 <div key={edu.id} style={{ marginBottom: "8px" }}>
                   <p style={{ fontWeight: 600, margin: 0 }}>{edu.school}</p>
@@ -136,10 +134,11 @@ const ResumePreview: React.FC<Props> = ({ data, titles }) => {
             </SectionPreview>
           )}
 
-          {/* Projects */}
-          {(data.projects.length > 0 || data.projectsText) && (
+          {(data.projectsText || data.projects.length > 0) && (
             <SectionPreview title={titles.projects || "Projects"}>
-              {data.projectsText && <p style={{ ...textStyle, marginTop: "4px" }}>{data.projectsText}</p>}
+              {data.projectsText && (
+                <p style={textStyle}>{data.projectsText}</p>
+              )}
               {data.projects.map((proj: Project) => (
                 <div key={proj.id} style={{ marginBottom: "8px" }}>
                   <p style={{ fontWeight: 600, margin: 0 }}>{proj.title}</p>
@@ -163,8 +162,6 @@ const ResumePreview: React.FC<Props> = ({ data, titles }) => {
             display: "flex",
             flexDirection: "column",
             gap: "16px",
-            wordBreak: "break-word",
-            overflowWrap: "break-word",
             backgroundColor: rightColumnBgColor,
             color: rightColumnTextColor,
           }}
@@ -174,14 +171,43 @@ const ResumePreview: React.FC<Props> = ({ data, titles }) => {
               <p style={textStyle}>{data.contactText}</p>
             </SectionPreview>
           )}
+
           {data.skillsText && (
             <SectionPreview title={titles.skills || "Skills"}>
               <p style={textStyle}>{data.skillsText}</p>
             </SectionPreview>
           )}
-          {data.languagesText && (
+
+          {/* Languages Section */}
+          {(data.languagesList ?? []).filter((lang) => lang.name.trim() !== "")
+            .length > 0 && (
             <SectionPreview title={titles.languages || "Languages"}>
-              <p style={textStyle}>{data.languagesText}</p>
+              {(data.languagesList ?? [])
+                .filter((lang) => lang.name.trim() !== "")
+                .map((lang: Language, i: number) => (
+                  <div key={i} style={{ marginBottom: "10px" }}>
+                    <p style={{ margin: 0, fontWeight: 500 }}>{lang.name}</p>
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "6px",
+                        backgroundColor: "#ddd",
+                        borderRadius: "3px",
+                        marginTop: "4px",
+                        overflow: "hidden",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: `${(lang.level / 5) * 100}%`,
+                          height: "100%",
+                          backgroundColor: invertHexColor(rightColumnBgColor),
+                          borderRadius: "3px",
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
             </SectionPreview>
           )}
         </div>

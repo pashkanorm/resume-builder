@@ -1,11 +1,13 @@
 import React from "react";
 import type { ResumeData } from "../types/types";
-import TextareaSection from "./TextareaSection";
+import EditableSection from "./EditableSection";
+import EditableLanguages from "./EditableLanguages";
 
 interface ResumeFormProps {
   data: ResumeData;
   setData: React.Dispatch<React.SetStateAction<ResumeData>>;
   titles: Record<string, string>;
+  columnBgColor?: string;
   setTitles: React.Dispatch<React.SetStateAction<Record<string, string>>>;
   sections?: (
     | "summary"
@@ -16,6 +18,8 @@ interface ResumeFormProps {
     | "skills"
     | "languages"
   )[];
+    isLeft?: boolean; // <-- add this
+
 }
 
 export default function ResumeForm({
@@ -24,15 +28,17 @@ export default function ResumeForm({
   titles,
   setTitles,
   sections = [],
+  isLeft = false, 
 }: ResumeFormProps) {
-  const handleTitleChange = (section: keyof ResumeData, newTitle: string) => {
+  const handleTitleChange = (section: keyof typeof titles, newTitle: string) => {
     setTitles((prev) => ({ ...prev, [section]: newTitle }));
   };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+      {/* LEFT COLUMN SECTIONS */}
       {sections.includes("summary") && (
-        <TextareaSection
+        <EditableSection
           title={titles.summary}
           onTitleChange={(newTitle) => handleTitleChange("summary", newTitle)}
           value={data.summary || ""}
@@ -42,7 +48,7 @@ export default function ResumeForm({
       )}
 
       {sections.includes("experience") && (
-        <TextareaSection
+        <EditableSection
           title={titles.experience}
           onTitleChange={(newTitle) => handleTitleChange("experience", newTitle)}
           value={data.experienceText || ""}
@@ -52,7 +58,7 @@ export default function ResumeForm({
       )}
 
       {sections.includes("education") && (
-        <TextareaSection
+        <EditableSection
           title={titles.education}
           onTitleChange={(newTitle) => handleTitleChange("education", newTitle)}
           value={data.educationText || ""}
@@ -62,7 +68,7 @@ export default function ResumeForm({
       )}
 
       {sections.includes("projects") && (
-        <TextareaSection
+        <EditableSection
           title={titles.projects}
           onTitleChange={(newTitle) => handleTitleChange("projects", newTitle)}
           value={data.projectsText || ""}
@@ -71,30 +77,36 @@ export default function ResumeForm({
         />
       )}
 
+      {/* RIGHT COLUMN SECTIONS */}
       {sections.includes("contact") && (
-        <TextareaSection
+        <EditableSection
           title={titles.contact}
           onTitleChange={(newTitle) => handleTitleChange("contact", newTitle)}
           value={data.contactText || ""}
           onChange={(val) => setData((prev) => ({ ...prev, contactText: val }))}
+          placeholder="Contact details..."
         />
       )}
 
       {sections.includes("skills") && (
-        <TextareaSection
+        <EditableSection
           title={titles.skills}
           onTitleChange={(newTitle) => handleTitleChange("skills", newTitle)}
           value={data.skillsText || ""}
           onChange={(val) => setData((prev) => ({ ...prev, skillsText: val }))}
+          placeholder="List your skills..."
         />
       )}
 
+      {/* LANGUAGES SECTION */}
       {sections.includes("languages") && (
-        <TextareaSection
+        <EditableLanguages
           title={titles.languages}
+          languages={data.languagesList || []}
           onTitleChange={(newTitle) => handleTitleChange("languages", newTitle)}
-          value={data.languagesText || ""}
-          onChange={(val) => setData((prev) => ({ ...prev, languagesText: val }))}
+          onLanguagesChange={(updated) => setData((prev) => ({ ...prev, languagesList: updated }))}
+          columnBgColor={isLeft ? data.leftColumnBgColor : data.rightColumnBgColor}
+
         />
       )}
     </div>

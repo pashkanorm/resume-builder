@@ -33,6 +33,11 @@ export interface Project {
   description?: string;
 }
 
+export interface Language {
+  name: string;
+  level: number; 
+}
+
 export interface ResumeData {
   contact: Contact;
   summary?: string;
@@ -40,18 +45,21 @@ export interface ResumeData {
   education: Education[];
   projects: Project[];
   skills?: string[];
-  languages?: string[];
+
+  // Only use languagesList
+  languagesList?: Language[];
+
   contactText?: string;
   skillsText?: string;
   languagesText?: string;
-  experienceText?: string; 
-  educationText?: string; 
-  projectsText?: string; 
+  experienceText?: string;
+  educationText?: string;
+  projectsText?: string;
 
   headerBgColor?: string;
   headerTextColor?: string;
-  leftColumnBgColor?: string;
-  leftColumnTextColor?: string;
-  rightColumnBgColor?: string;
-  rightColumnTextColor?: string;
+  leftColumnBgColor: string;
+  leftColumnTextColor: string;
+  rightColumnBgColor: string;
+  rightColumnTextColor: string;
 }
