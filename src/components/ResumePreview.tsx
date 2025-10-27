@@ -1,5 +1,5 @@
 import React from "react";
-import type { ExtendedResumeData, ExtraSection } from "../types/types";
+import type { ExtendedResumeData } from "../types/types";
 import ColumnPreview from "./ColumnPreview";
 
 interface Props {
