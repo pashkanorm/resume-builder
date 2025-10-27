@@ -1,5 +1,5 @@
 import React from "react";
-import type { ExtraSection, Language } from "../types/types";
+import type { ExtraSection, RangeBar } from "../types/types";
 import TextareaSection from "./TextareaSection";
 import RangeBarSection from "./RangeBarSection";
 
@@ -7,7 +7,7 @@ interface ColumnSectionsProps {
   sections: ExtraSection[];
   updateSection: (
     id: number,
-    updated: { title?: string; value?: string; languages?: Language[] }
+    updated: { title?: string; value?: string; languages?: RangeBar[] }
   ) => void;
   removeSection: (id: number) => void;
   bgColor: string;

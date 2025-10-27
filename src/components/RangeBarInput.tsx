@@ -1,16 +1,16 @@
 import React from "react";
-import type { Language } from "../types/types";
+import type { RangeBar } from "../types/types";
 import { invertHexColor } from "../utils/invertHexColor";
 
-interface LanguageInputProps {
-  lang: Language;
+interface RangeBarInputProps {
+  lang: RangeBar;
   index: number;
-  onChange: (index: number, updatedLang: Language) => void;
+  onChange: (index: number, updatedLang: RangeBar) => void;
   onRemove: () => void;
   bgColor: string; // background color of the column
 }
 
-const LanguageInput: React.FC<LanguageInputProps> = ({
+const RangeBarInput: React.FC<RangeBarInputProps> = ({
   lang,
   index,
   onChange,
@@ -49,7 +49,7 @@ const LanguageInput: React.FC<LanguageInputProps> = ({
             height="18"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#c52f2fff"
+            stroke="#d43737ff"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -82,4 +82,4 @@ const LanguageInput: React.FC<LanguageInputProps> = ({
   );
 };
 
-export default LanguageInput;
+export default RangeBarInput;

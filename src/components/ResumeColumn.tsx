@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import type { ResumeData, Language } from "../types/types";
+import type { ResumeData, RangeBar } from "../types/types";
 import ColumnSections from "./ColumnSections";
 import ColumnColorPickers from "./ColumnColorPickers";
 import AddSectionMenu from "./AddSectionMenu";
@@ -10,7 +10,7 @@ export interface ExtendedResumeData extends ResumeData {
 
 export type ExtraSection =
   | { id: number; type: "text"; title: string; value: string; isLeft: boolean }
-  | { id: number; type: "range"; title: string; languages: Language[]; isLeft: boolean };
+  | { id: number; type: "range"; title: string; languages: RangeBar[]; isLeft: boolean };
 
 interface ResumeColumnProps {
   data: ExtendedResumeData;
@@ -107,7 +107,7 @@ const ResumeColumn: React.FC<ResumeColumnProps> = ({
 
   const updateSection = (
     id: number,
-    updated: { title?: string; value?: string; languages?: Language[] }
+    updated: { title?: string; value?: string; languages?: RangeBar[] }
   ) => {
     setData((prev) => ({
       ...prev,

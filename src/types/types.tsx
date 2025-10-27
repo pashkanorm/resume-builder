@@ -9,9 +9,13 @@ export interface Contact {
   github?: string;
 }
 
+export interface ExtendedResumeData extends ResumeData {
+  extraSections?: ExtraSection[];
+}
+
 export type ExtraSection =
   | { id: number; type: "text"; title: string; value: string; isLeft: boolean }
-  | { id: number; type: "range"; title: string; languages: Language[]; isLeft: boolean };
+  | { id: number; type: "range"; title: string; languages: RangeBar[]; isLeft: boolean };
 
 export interface Experience {
   id: string;
@@ -37,7 +41,7 @@ export interface Project {
   description?: string;
 }
 
-export interface Language {
+export interface RangeBar {
   name: string;
   level: number; 
 }
@@ -51,7 +55,7 @@ export interface ResumeData {
   skills?: string[];
 
   // Only use languagesList
-  languagesList?: Language[];
+  languagesList?: RangeBar[];
 
   contactText?: string;
   skillsText?: string;

@@ -1,13 +1,13 @@
 import React from "react";
 import EditableTitle from "./EditableTitle";
-import LanguageInput from "./LanguageInput";
-import type { Language } from "../types/types";
+import RangeBarInput from "./RangeBarInput";
+import type { RangeBar } from "../types/types";
 
 interface EditableLanguagesProps {
   title: string;
-  languages: Language[];
+  languages: RangeBar[];
   onTitleChange: (newTitle: string) => void;
-  onLanguagesChange: (updatedLanguages: Language[]) => void;
+  onLanguagesChange: (updatedLanguages: RangeBar[]) => void;
   columnBgColor: string;
   onRemove?: () => void; // <-- new prop
 }
@@ -20,7 +20,7 @@ const EditableLanguages: React.FC<EditableLanguagesProps> = ({
   columnBgColor,
   onRemove,
 }) => {
-  const handleLanguageChange = (index: number, updatedLang: Language) => {
+  const handleLanguageChange = (index: number, updatedLang: RangeBar) => {
     const updatedList = [...languages];
     updatedList[index] = updatedLang;
     onLanguagesChange(updatedList);
@@ -50,7 +50,7 @@ const EditableLanguages: React.FC<EditableLanguagesProps> = ({
               height="18"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#cc0000"
+              stroke="#2c2c2cff"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -66,7 +66,7 @@ const EditableLanguages: React.FC<EditableLanguagesProps> = ({
       </div>
 
       {languages.map((lang, i) => (
-        <LanguageInput
+        <RangeBarInput
           key={i}
           lang={lang}
           index={i}
