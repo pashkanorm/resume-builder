@@ -9,6 +9,10 @@ export interface Contact {
   github?: string;
 }
 
+export type ExtraSection =
+  | { id: number; type: "text"; title: string; value: string; isLeft: boolean }
+  | { id: number; type: "range"; title: string; languages: Language[]; isLeft: boolean };
+
 export interface Experience {
   id: string;
   company: string;

@@ -9,6 +9,7 @@ interface EditableLanguagesProps {
   onTitleChange: (newTitle: string) => void;
   onLanguagesChange: (updatedLanguages: Language[]) => void;
   columnBgColor: string;
+  onRemove?: () => void; // <-- new prop
 }
 
 const EditableLanguages: React.FC<EditableLanguagesProps> = ({
@@ -17,6 +18,7 @@ const EditableLanguages: React.FC<EditableLanguagesProps> = ({
   onTitleChange,
   onLanguagesChange,
   columnBgColor,
+  onRemove,
 }) => {
   const handleLanguageChange = (index: number, updatedLang: Language) => {
     const updatedList = [...languages];
@@ -28,9 +30,40 @@ const EditableLanguages: React.FC<EditableLanguagesProps> = ({
     onLanguagesChange([...languages, { name: "", level: 0 }]);
   };
 
+  const removeLanguage = (index: number) => {
+    onLanguagesChange(languages.filter((_, i) => i !== index));
+  };
+
   return (
     <div style={{ marginBottom: "16px" }}>
-      <EditableTitle title={title} onChange={onTitleChange} />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <EditableTitle title={title} onChange={onTitleChange} />
+        {onRemove && (
+          <button
+            onClick={onRemove}
+            style={{ background: "transparent", border: "none", cursor: "pointer" }}
+            title="Remove section"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#cc0000"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+              <line x1="10" y1="11" x2="10" y2="17"></line>
+              <line x1="14" y1="11" x2="14" y2="17"></line>
+              <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          </button>
+        )}
+      </div>
 
       {languages.map((lang, i) => (
         <LanguageInput
@@ -38,7 +71,8 @@ const EditableLanguages: React.FC<EditableLanguagesProps> = ({
           lang={lang}
           index={i}
           onChange={handleLanguageChange}
-          bgColor={columnBgColor} // pass the column background
+          onRemove={() => removeLanguage(i)}
+          bgColor={columnBgColor}
         />
       ))}
 
@@ -55,7 +89,7 @@ const EditableLanguages: React.FC<EditableLanguagesProps> = ({
           cursor: "pointer",
         }}
       >
-        Add Language
+        Add Entry
       </button>
     </div>
   );

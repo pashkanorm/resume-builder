@@ -1,7 +1,7 @@
 import React from "react";
 import type { ResumeData } from "../types/types";
-import EditableSection from "./EditableSection";
-import EditableLanguages from "./EditableLanguages";
+import EditableSection from "./TextareaSection";
+import EditableLanguages from "./RangeBarSection";
 
 interface ResumeFormProps {
   data: ResumeData;
