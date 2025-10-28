@@ -3,15 +3,15 @@ import type { RangeBar } from "../types/types";
 import { invertHexColor } from "../utils/invertHexColor";
 
 interface RangeBarInputProps {
-  lang: RangeBar;
+  entry: RangeBar;
   index: number;
-  onChange: (index: number, updatedLang: RangeBar) => void;
+  onChange: (index: number, updatedEntry: RangeBar) => void;
   onRemove: () => void;
-  bgColor: string; // background color of the column
+  bgColor: string;
 }
 
 const RangeBarInput: React.FC<RangeBarInputProps> = ({
-  lang,
+  entry: entry,
   index,
   onChange,
   onRemove,
@@ -25,9 +25,9 @@ const RangeBarInput: React.FC<RangeBarInputProps> = ({
       <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
         <input
           type="text"
-          value={lang.name}
+          value={entry.name}
           placeholder="New Entry"
-          onChange={(e) => onChange(index, { ...lang, name: e.target.value })}
+          onChange={(e) => onChange(index, { ...entry, name: e.target.value })}
           style={{ flexGrow: 1 }}
         />
         <button
@@ -41,7 +41,7 @@ const RangeBarInput: React.FC<RangeBarInputProps> = ({
             alignItems: "center",
             padding: 0,
           }}
-          title="Remove language"
+          title="Remove entry"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -68,9 +68,9 @@ const RangeBarInput: React.FC<RangeBarInputProps> = ({
         type="range"
         min={0}
         max={5}
-        value={lang.level}
+        value={entry.level}
         onChange={(e) =>
-          onChange(index, { ...lang, level: parseInt(e.target.value) })
+          onChange(index, { ...entry, level: parseInt(e.target.value) })
         }
         style={{
           width: "100%",

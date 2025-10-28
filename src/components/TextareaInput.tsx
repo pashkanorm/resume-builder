@@ -1,7 +1,7 @@
 import React from "react";
 import InputField from "./InputField";
 
-interface TextareaSectionProps {
+interface TextareaInputProps {
   value: string;
   onChange: (newValue: string) => void;
   placeholder?: string;
@@ -9,13 +9,13 @@ interface TextareaSectionProps {
   isTextarea?: boolean;
 }
 
-export default function TextareaSection({
+export default function TextareaInput({
   value,
   onChange,
   placeholder = "",
   children,
   isTextarea = true,
-}: TextareaSectionProps) {
+}: TextareaInputProps) {
   return (
     <div>
       {isTextarea && (

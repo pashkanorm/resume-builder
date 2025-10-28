@@ -3,35 +3,35 @@ import EditableTitle from "./EditableTitle";
 import RangeBarInput from "./RangeBarInput";
 import type { RangeBar } from "../types/types";
 
-interface EditableLanguagesProps {
+interface RangeBarSectionProps {
   title: string;
-  languages: RangeBar[];
+  entries: RangeBar[];
   onTitleChange: (newTitle: string) => void;
-  onLanguagesChange: (updatedLanguages: RangeBar[]) => void;
+  onEntriesChange: (updatedEntries: RangeBar[]) => void;
   columnBgColor: string;
-  onRemove?: () => void; // <-- new prop
+  onRemove?: () => void;
 }
 
-const EditableLanguages: React.FC<EditableLanguagesProps> = ({
+const RangeBarSection: React.FC<RangeBarSectionProps> = ({
   title,
-  languages,
+  entries: entries,
   onTitleChange,
-  onLanguagesChange,
+  onEntriesChange: onEntriesChange,
   columnBgColor,
   onRemove,
 }) => {
-  const handleLanguageChange = (index: number, updatedLang: RangeBar) => {
-    const updatedList = [...languages];
-    updatedList[index] = updatedLang;
-    onLanguagesChange(updatedList);
+  const handleEntryChange = (index: number, updatedEntry: RangeBar) => {
+    const updatedList = [...entries];
+    updatedList[index] = updatedEntry;
+    onEntriesChange(updatedList);
   };
 
-  const addLanguage = () => {
-    onLanguagesChange([...languages, { name: "", level: 0 }]);
+  const addEntry = () => {
+    onEntriesChange([...entries, { name: "", level: 0 }]);
   };
 
-  const removeLanguage = (index: number) => {
-    onLanguagesChange(languages.filter((_, i) => i !== index));
+  const removeEntry = (index: number) => {
+    onEntriesChange(entries.filter((_, i) => i !== index));
   };
 
   return (
@@ -65,20 +65,20 @@ const EditableLanguages: React.FC<EditableLanguagesProps> = ({
         )}
       </div>
 
-      {languages.map((lang, i) => (
+      {entries.map((lang, i) => (
         <RangeBarInput
           key={i}
-          lang={lang}
+          entry={lang}
           index={i}
-          onChange={handleLanguageChange}
-          onRemove={() => removeLanguage(i)}
+          onChange={handleEntryChange}
+          onRemove={() => removeEntry(i)}
           bgColor={columnBgColor}
         />
       ))}
 
       <button
         type="button"
-        onClick={addLanguage}
+        onClick={addEntry}
         style={{
           marginTop: "0.5rem",
           background: "#007bff",
@@ -95,4 +95,4 @@ const EditableLanguages: React.FC<EditableLanguagesProps> = ({
   );
 };
 
-export default EditableLanguages;
+export default RangeBarSection;

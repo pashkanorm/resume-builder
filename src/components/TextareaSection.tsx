@@ -1,8 +1,8 @@
 import React from "react";
-import TextareaSection from "./TextareaInput";
+import TextareaInput from "./TextareaInput";
 import EditableTitle from "./EditableTitle";
 
-interface EditableSectionProps {
+interface TextareaSectionProps {
   title: string;
   onTitleChange: (newTitle: string) => void;
   value?: string;
@@ -13,7 +13,7 @@ interface EditableSectionProps {
   onRemove?: () => void;
 }
 
-const EditableSection: React.FC<EditableSectionProps> = ({
+const TextareaSection: React.FC<TextareaSectionProps> = ({
   title,
   onTitleChange,
   value = "",
@@ -64,16 +64,16 @@ const EditableSection: React.FC<EditableSectionProps> = ({
       </div>
 
       {/* Textarea below the title */}
-      <TextareaSection
+      <TextareaInput
         value={value}
         onChange={onChange}
         placeholder={placeholder}
         isTextarea={isTextarea}
       >
         {children}
-      </TextareaSection>
+      </TextareaInput>
     </div>
   );
 };
 
-export default EditableSection;
+export default TextareaSection;

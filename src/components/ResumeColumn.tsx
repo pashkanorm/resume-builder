@@ -3,6 +3,7 @@ import type { ResumeData, RangeBar } from "../types/types";
 import ColumnSections from "./ColumnSections";
 import ColumnColorPickers from "./ColumnColorPickers";
 import AddSectionMenu from "./AddSectionMenu";
+import { Droppable } from "@hello-pangea/dnd";
 
 export interface ExtendedResumeData extends ResumeData {
   extraSections?: ExtraSection[];
@@ -10,7 +11,13 @@ export interface ExtendedResumeData extends ResumeData {
 
 export type ExtraSection =
   | { id: number; type: "text"; title: string; value: string; isLeft: boolean }
-  | { id: number; type: "range"; title: string; languages: RangeBar[]; isLeft: boolean };
+  | {
+      id: number;
+      type: "range";
+      title: string;
+      languages: RangeBar[];
+      isLeft: boolean;
+    };
 
 interface ResumeColumnProps {
   data: ExtendedResumeData;
@@ -30,6 +37,7 @@ interface ResumeColumnProps {
   bgColor: string;
   textColor: string;
   isLeft?: boolean;
+  droppableId: string; // NEW: needed for DnD
 }
 
 const ResumeColumn: React.FC<ResumeColumnProps> = ({
@@ -41,6 +49,7 @@ const ResumeColumn: React.FC<ResumeColumnProps> = ({
   bgColor,
   textColor,
   isLeft = false,
+  droppableId,
 }) => {
   const [showAddMenu, setShowAddMenu] = useState(false);
 
@@ -52,7 +61,8 @@ const ResumeColumn: React.FC<ResumeColumnProps> = ({
       const exists = data.extraSections?.some(
         (s) =>
           s.isLeft === isLeft &&
-          s.title === (titles[sec] || sec.charAt(0).toUpperCase() + sec.slice(1))
+          s.title ===
+            (titles[sec] || sec.charAt(0).toUpperCase() + sec.slice(1))
       );
 
       if (!exists) {
@@ -65,7 +75,8 @@ const ResumeColumn: React.FC<ResumeColumnProps> = ({
             isLeft,
           });
         } else {
-          const val = typeof (data as any)[sec] === "string" ? (data as any)[sec] : "";
+          const val =
+            typeof (data as any)[sec] === "string" ? (data as any)[sec] : "";
           initialSections.push({
             id: Date.now() + Math.random(),
             type: "text",
@@ -96,8 +107,20 @@ const ResumeColumn: React.FC<ResumeColumnProps> = ({
   const addSection = (type: "text" | "range") => {
     const newSection: ExtraSection =
       type === "text"
-        ? { id: Date.now(), type, title: "Custom Text Field", value: "", isLeft }
-        : { id: Date.now(), type, title: "Custom Range Field", languages: [], isLeft };
+        ? {
+            id: Date.now(),
+            type,
+            title: "Custom Text Field",
+            value: "",
+            isLeft,
+          }
+        : {
+            id: Date.now(),
+            type,
+            title: "Custom Range Field",
+            languages: [],
+            isLeft,
+          };
     setData((prev) => ({
       ...prev,
       extraSections: [...(prev.extraSections || []), newSection],
@@ -124,7 +147,8 @@ const ResumeColumn: React.FC<ResumeColumnProps> = ({
     }));
   };
 
-  const extraSections = data.extraSections?.filter((s) => s.isLeft === isLeft) || [];
+  const extraSections =
+    data.extraSections?.filter((s) => s.isLeft === isLeft) || [];
 
   return (
     <div
@@ -138,17 +162,28 @@ const ResumeColumn: React.FC<ResumeColumnProps> = ({
         gap: "10px",
       }}
     >
-      {/* Render all sections via ColumnSections */}
-      <ColumnSections
-        sections={extraSections}
-        updateSection={updateSection}
-        removeSection={removeSection}
-        bgColor={bgColor}
-      />
+      {/* DROPPABLE COLUMN */}
+      <Droppable droppableId={droppableId}>
+        {(provided) => (
+          <div ref={provided.innerRef} {...provided.droppableProps}>
+            <ColumnSections
+              columnId={isLeft ? "left" : "right"}
+              sections={extraSections}
+              updateSection={updateSection}
+              removeSection={removeSection}
+              bgColor={bgColor}
+            />
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
 
       {/* Add Section menu */}
       {showAddMenu ? (
-        <AddSectionMenu addSection={addSection} onCancel={() => setShowAddMenu(false)} />
+        <AddSectionMenu
+          addSection={addSection}
+          onCancel={() => setShowAddMenu(false)}
+        />
       ) : (
         <button
           onClick={() => setShowAddMenu(true)}
@@ -167,7 +202,12 @@ const ResumeColumn: React.FC<ResumeColumnProps> = ({
       )}
 
       {/* Color pickers */}
-      <ColumnColorPickers isLeft={isLeft} bgColor={bgColor} textColor={textColor} setData={setData} />
+      <ColumnColorPickers
+        isLeft={isLeft}
+        bgColor={bgColor}
+        textColor={textColor}
+        setData={setData}
+      />
     </div>
   );
 };

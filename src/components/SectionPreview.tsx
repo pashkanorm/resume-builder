@@ -6,18 +6,19 @@ interface Props {
 }
 
 const SectionPreview: React.FC<Props> = ({ title, children }) => (
-  <section style={{ marginBottom: "16px" }}>
+  <section style={{ marginBottom: "20px" }}>
     <h2
       style={{
         fontSize: "16pt",
         borderBottom: "1px solid #000",
-        width: "100%",
+        display: "inline-block",
         marginBottom: "4px",
       }}
     >
-      {title}
+       {title}
+    
     </h2>
-    <div>{children}</div>
+    <div style={{ paddingTop: "8px" }}>{children}</div>
   </section>
 );
 

@@ -1,14 +1,16 @@
 import React, { useState } from "react";
+import { DragDropContext } from "@hello-pangea/dnd";
+import type { DropResult }  from "@hello-pangea/dnd";
 import ResumeHeader from "./components/ResumeHeader";
 import ResumeColumn from "./components/ResumeColumn";
+import type { ExtendedResumeData }  from "./components/ResumeColumn";
 import ResumePreview from "./components/ResumePreview";
-import type { ResumeData } from "./types/types";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import "./App.css";
 
 export default function App() {
-  const [data, setData] = useState<ResumeData>({
+  const [data, setData] = useState<ExtendedResumeData>({
     contact: { fullName: "", title: "", email: "", phone: "", location: "" },
     summary: "",
     experience: [],
@@ -22,6 +24,7 @@ export default function App() {
     leftColumnTextColor: "#000000",
     rightColumnBgColor: "#ffffff",
     rightColumnTextColor: "#000000",
+    extraSections: [],
   });
 
   const [titles, setTitles] = useState<Record<string, string>>({
@@ -33,6 +36,32 @@ export default function App() {
     skills: "Skills",
     languages: "Languages",
   });
+
+  // Handle drag-and-drop reordering
+  const handleDragEnd = (result: DropResult) => {
+    if (!result.destination) return; // dropped outside
+
+    const { source, destination } = result;
+    const sourceColumn = source.droppableId === "left";
+    const destColumn = destination.droppableId === "left";
+
+    const filteredSections = data.extraSections?.filter(
+      (s) => s.isLeft === sourceColumn
+    );
+    if (!filteredSections) return;
+
+    const [moved] = filteredSections.splice(source.index, 1);
+    filteredSections.splice(destination.index, 0, moved);
+
+    // Merge back with other column
+    setData((prev) => ({
+      ...prev,
+      extraSections: [
+        ...(prev.extraSections?.filter((s) => s.isLeft !== sourceColumn) || []),
+        ...filteredSections,
+      ],
+    }));
+  };
 
   const handlePreview = () => {
     const container = document.createElement("div");
@@ -77,60 +106,47 @@ export default function App() {
   };
 
   return (
-    <div
-      className="app-container"
-      style={{ display: "flex", justifyContent: "center" }}
-    >
-      {/* CENTERED CONTAINER */}
-      <div
-        style={{
-          width: "900px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px",
-        }}
-      >
-        {/* HEADER */}
-        <div style={{ width: "100%" }}>
-          <ResumeHeader data={data} setData={setData} />
-        </div>
+    <DragDropContext onDragEnd={handleDragEnd}>
+      <div className="app-container" style={{ display: "flex", justifyContent: "center" }}>
+        <div style={{ width: "900px", display: "flex", flexDirection: "column", gap: "10px" }}>
+          <div style={{ width: "100%" }}>
+            <ResumeHeader data={data} setData={setData} />
+          </div>
 
-        {/* COLUMNS WRAPPER */}
-        <div style={{ display: "flex", width: "100%", gap: "10px" }}>
-          <ResumeColumn
-            data={data}
-            setData={setData}
-            titles={titles}
-            setTitles={setTitles}
-            sections={["summary", "experience", "education", "projects"]}
-            flex={2}
-            bgColor={data.leftColumnBgColor}
-            textColor={data.leftColumnTextColor}
-            isLeft
-          />
+          <div style={{ display: "flex", width: "100%", gap: "10px" }}>
+            <ResumeColumn
+              data={data}
+              setData={setData}
+              titles={titles}
+              setTitles={setTitles}
+              sections={["summary", "experience", "education", "projects"]}
+              flex={2}
+              bgColor={data.leftColumnBgColor}
+              textColor={data.leftColumnTextColor}
+              isLeft
+              droppableId="left"
+            />
 
-          <div
-            className="vertical-line"
-            style={{ width: "1px", backgroundColor: "#ccc" }}
-          />
+            <div className="vertical-line" style={{ width: "1px", backgroundColor: "#ccc" }} />
 
-          <ResumeColumn
-            data={data}
-            setData={setData}
-            titles={titles}
-            setTitles={setTitles}
-            sections={["contact", "skills", "languages"]}
-            flex={1}
-            bgColor={data.rightColumnBgColor}
-            textColor={data.rightColumnTextColor}
-          />
-        </div>
+            <ResumeColumn
+              data={data}
+              setData={setData}
+              titles={titles}
+              setTitles={setTitles}
+              sections={["contact", "skills", "languages"]}
+              flex={1}
+              bgColor={data.rightColumnBgColor}
+              textColor={data.rightColumnTextColor}
+              droppableId="right"
+            />
+          </div>
 
-        {/* PREVIEW BUTTON */}
-        <div className="preview-button-container">
-          <button onClick={handlePreview}>Preview Resume</button>
+          <div className="preview-button-container">
+            <button onClick={handlePreview}>Preview Resume</button>
+          </div>
         </div>
       </div>
-    </div>
+    </DragDropContext>
   );
 }
