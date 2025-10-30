@@ -1,6 +1,6 @@
 import html2pdf from "html2pdf.js";
 
-// Define the type manually (to avoid namespace error)
+// Define the type manually
 interface Html2PdfOptions {
   margin?: number | [number, number] | [number, number, number, number];
   filename?: string;

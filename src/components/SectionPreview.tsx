@@ -1,11 +1,12 @@
 import React from "react";
+import { markdownToHtml } from "../utils/markdownToHtml";
 
 interface Props {
   title: string;
-  children: React.ReactNode;
+  text: string;
 }
 
-const SectionPreview: React.FC<Props> = ({ title, children }) => (
+const SectionPreview: React.FC<Props> = ({ title, text }) => (
   <section style={{ marginBottom: "20px" }}>
     <h2
       style={{
@@ -15,10 +16,12 @@ const SectionPreview: React.FC<Props> = ({ title, children }) => (
         marginBottom: "4px",
       }}
     >
-       {title}
-    
+      {title}
     </h2>
-    <div style={{ paddingTop: "8px" }}>{children}</div>
+    <div
+      style={{ paddingTop: "8px" }}
+      dangerouslySetInnerHTML={{ __html: markdownToHtml(text) }}
+    />
   </section>
 );
 

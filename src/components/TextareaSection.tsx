@@ -8,7 +8,6 @@ interface TextareaSectionProps {
   value?: string;
   onChange?: (val: string) => void;
   placeholder?: string;
-  children?: React.ReactNode;
   isTextarea?: boolean;
   onRemove?: () => void;
 }
@@ -19,14 +18,19 @@ const TextareaSection: React.FC<TextareaSectionProps> = ({
   value = "",
   onChange = () => {},
   placeholder = "",
-  children,
   isTextarea = true,
   onRemove,
 }) => {
   return (
     <div style={{ marginBottom: "16px" }}>
       {/* Flex row for title + trashcan */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
         <EditableTitle title={title} onChange={onTitleChange} />
         {onRemove && (
           <button
@@ -69,9 +73,7 @@ const TextareaSection: React.FC<TextareaSectionProps> = ({
         onChange={onChange}
         placeholder={placeholder}
         isTextarea={isTextarea}
-      >
-        {children}
-      </TextareaInput>
+      />
     </div>
   );
 };

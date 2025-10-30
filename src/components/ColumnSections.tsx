@@ -5,7 +5,7 @@ import TextareaSection from "./TextareaSection";
 import RangeBarSection from "./RangeBarSection";
 
 interface ColumnSectionsProps {
-  columnId: string; // unique id for each column ("left" / "right")
+  columnId: string;
   sections: ExtraSection[];
   updateSection: (
     id: number,

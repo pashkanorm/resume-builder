@@ -39,11 +39,10 @@ export default function App() {
 
   // Handle drag-and-drop reordering
   const handleDragEnd = (result: DropResult) => {
-    if (!result.destination) return; // dropped outside
+    if (!result.destination) return;
 
     const { source, destination } = result;
     const sourceColumn = source.droppableId === "left";
-    const destColumn = destination.droppableId === "left";
 
     const filteredSections = data.extraSections?.filter(
       (s) => s.isLeft === sourceColumn

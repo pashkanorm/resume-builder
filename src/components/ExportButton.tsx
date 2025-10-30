@@ -25,7 +25,7 @@ const ExportButton: React.FC<ExportButtonProps> = ({ elementId, buttonText, open
       },
       x: 20,
       y: 20,
-      html2canvas: { scale: 0.57 }, // optional: scale to fit A4
+      html2canvas: { scale: 0.57 },
     });
   };
 

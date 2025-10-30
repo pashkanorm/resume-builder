@@ -53,17 +53,13 @@ export interface ResumeData {
   education: Education[];
   projects: Project[];
   skills?: string[];
-
-  // Only use languagesList
   languagesList?: RangeBar[];
-
   contactText?: string;
   skillsText?: string;
   languagesText?: string;
   experienceText?: string;
   educationText?: string;
   projectsText?: string;
-
   headerBgColor?: string;
   headerTextColor?: string;
   leftColumnBgColor: string;

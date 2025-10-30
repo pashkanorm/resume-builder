@@ -7,10 +7,10 @@ html, body {
   padding: 0;
   width: 100%;
   min-height: 100%;
-  background-color: #ffffff !important; /* force white background */
+  background-color: #ffffff !important;
   color: #000;
-  overflow-y: auto;   /* allow vertical scrolling */
-  overflow-x: hidden; /* prevent horizontal scroll */
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 #root {

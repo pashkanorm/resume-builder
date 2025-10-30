@@ -37,7 +37,7 @@ interface ResumeColumnProps {
   bgColor: string;
   textColor: string;
   isLeft?: boolean;
-  droppableId: string; // NEW: needed for DnD
+  droppableId: string;
 }
 
 const ResumeColumn: React.FC<ResumeColumnProps> = ({

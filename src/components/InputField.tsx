@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import type { CSSProperties } from "react";
 
 interface InputFieldProps {
@@ -10,10 +10,25 @@ interface InputFieldProps {
   style?: CSSProperties; 
 }
 
-const InputField: React.FC<InputFieldProps> = ({ type = "text", placeholder, value, onChange, className, style }) => {
-  if (type === "textarea") {
+const InputField = forwardRef<HTMLTextAreaElement | HTMLInputElement, InputFieldProps>(
+  ({ type = "text", placeholder, value, onChange, className, style }, ref) => {
+    if (type === "textarea") {
+      return (
+        <textarea
+          ref={ref as React.Ref<HTMLTextAreaElement>}
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className={className}
+          style={style}
+        />
+      );
+    }
+
     return (
-      <textarea
+      <input
+        ref={ref as React.Ref<HTMLInputElement>}
+        type="text"
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -22,17 +37,6 @@ const InputField: React.FC<InputFieldProps> = ({ type = "text", placeholder, val
       />
     );
   }
-
-  return (
-    <input
-      type="text"
-      placeholder={placeholder}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className={className}
-      style={style}
-    />
-  );
-};
+);
 
 export default InputField;
