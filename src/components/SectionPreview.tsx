@@ -19,7 +19,11 @@ const SectionPreview: React.FC<Props> = ({ title, text }) => (
       {title}
     </h2>
     <div
-      style={{ paddingTop: "8px" }}
+      style={{ 
+        paddingTop: "8px",
+        lineHeight: 1.5,
+        wordSpacing: "0.2em"
+      }}
       dangerouslySetInnerHTML={{ __html: markdownToHtml(text) }}
     />
   </section>
