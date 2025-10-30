@@ -16,44 +16,36 @@ export default function TextareaInput({
 }: TextareaInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const toggleMarkdownAroundSelection = (symbol: string) => {
-    if (!textareaRef.current) return;
-    const textarea = textareaRef.current;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = value.slice(start, end);
+const toggleMarkdownAroundSelection = (symbol: string) => {
+  if (!textareaRef.current) return;
+  const textarea = textareaRef.current;
+  const start = textarea.selectionStart;
+  const end = textarea.selectionEnd;
+  const selectedText = value.slice(start, end);
 
-    let newText: string;
-    let newStart = start;
-    let newEnd = end;
+  // Remove ALL occurrences of the target symbol inside selection
+  const escaped = symbol.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
+  const regex = new RegExp(escaped, "g");
+  const cleaned = selectedText.replace(regex, "");
 
-    if (selectedText.startsWith(symbol) && selectedText.endsWith(symbol)) {
-      // Remove symbol if already applied
-      newText =
-        value.slice(0, start) +
-        selectedText.slice(symbol.length, selectedText.length - symbol.length) +
-        value.slice(end);
-      newEnd = start + selectedText.length - 2 * symbol.length;
-    } else {
-      // Add symbol
-      newText =
-        value.slice(0, start) +
-        symbol +
-        selectedText +
-        symbol +
-        value.slice(end);
-      newStart = start;
-      newEnd = end + 2 * symbol.length;
-    }
+  // Determine if the symbol existed anywhere
+  const hadSymbol = regex.test(selectedText);
 
-    onChange(newText);
+  const newText = hadSymbol
+    ? value.slice(0, start) + cleaned + value.slice(end) // remove symbol
+    : value.slice(0, start) + symbol + cleaned + symbol + value.slice(end); // add symbol
 
-    // Restore selection to include symbols
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(newStart, newEnd);
-    }, 0);
-  };
+  onChange(newText);
+
+  // Restore selection
+  setTimeout(() => {
+    textarea.focus();
+    textarea.setSelectionRange(start, start + cleaned.length + (hadSymbol ? 0 : 2 * symbol.length));
+  }, 0);
+};
+
+
+
 
   return (
     <div>
