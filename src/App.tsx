@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { DragDropContext } from "@hello-pangea/dnd";
 import type { DropResult }  from "@hello-pangea/dnd";
 import ResumeHeader from "./components/ResumeHeader";
